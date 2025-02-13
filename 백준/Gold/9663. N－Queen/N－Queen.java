@@ -1,5 +1,5 @@
 
-import java.io.*; 
+import java.io.*;
 
 public class Main {
 	static int[] col, diag1, diag2;
@@ -23,6 +23,17 @@ public class Main {
 		}
 		// count라는 row에 대해 i는 column의 정보를 저장
 		for (int i = 0; i < n; i++) {
+			if(count==0 && i>n/2-1) {
+				if(n%2==0) {
+					ans *=2;
+					break;
+				} else {
+					if(i<=n/2) {
+						ans *= 2;
+					}
+					else break;
+				}
+			}
 			if (col[i]==0 && diag1[count+i]==0 && diag2[i-count+n-1]==0) { // 0인 지점에만 놓을 수 있음
 				put(count, i, +1);
 				dfs(count + 1);
