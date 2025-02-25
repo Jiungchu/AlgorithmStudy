@@ -12,18 +12,20 @@ public class Main {
 	static int[] numbers;
 	
 	public static void main(String[] args) throws IOException{
+		StringBuilder sb = new StringBuilder();
 		N = Integer.parseInt(br.readLine());
 		numbers = new int[N];
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		for(int i=0;i<N;i++)
 			numbers[i] = Integer.parseInt(st.nextToken());
 		
-		if(!np()) System.out.println(-1);
+		if(!np()) sb.append(-1);
 		else {
 			for(int i=0;i<N;i++) {
-				System.out.print(numbers[i]+" ");
+				sb.append(numbers[i]).append(" ");
 			}
 		}
+		System.out.println(sb.toString());
 		br.close();
 	}
 
@@ -34,10 +36,12 @@ public class Main {
 		
 		if(i==0) return false;
 		
+		// i-1보다 큰 j 찾기
 		int j = N-1;
 		while(numbers[i-1]>=numbers[j]) j--;
 		swap(i-1,j);
 		
+//		i-1 뒤로 오름차순 정렬
 		int k=N-1;
 		while(i<k) swap(i++, k--);
 		
