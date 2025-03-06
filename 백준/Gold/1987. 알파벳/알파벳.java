@@ -9,6 +9,7 @@ public class Main {
 
 	static int R,C,maxLen; 
 	static char[][] arr;
+	static int[][] visit;
 
 	public static void main(String[] args) throws IOException {
 
@@ -21,6 +22,8 @@ public class Main {
 	// dfs 사용
 	static int[] dr = { 1, -1, 0, 0 }, dc = { 0, 0, 1, -1 };
 	static void dfs(int r, int c, int count, int mask) {
+		if(visit[r][c]==mask) return; // 이 전에 방문한 적 있는 상태인지 확인
+		visit[r][c] = mask;
 		maxLen = Math.max(maxLen, count);
 		for(int d=0;d<4;d++) {
 			int nr = r+dr[d], nc=c+dc[d];
@@ -35,6 +38,7 @@ public class Main {
 		R = Integer.parseInt(st.nextToken());
 		C = Integer.parseInt(st.nextToken());
 		arr = new char[R][];
+		visit = new int[R][C];
 		for (int i = 0; i < R; i++) {
 			arr[i] = br.readLine().toCharArray();
 		}
