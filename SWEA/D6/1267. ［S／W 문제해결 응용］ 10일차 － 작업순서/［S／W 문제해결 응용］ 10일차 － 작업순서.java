@@ -32,17 +32,18 @@ public class Solution {
     	
     	Queue<Integer> q = new ArrayDeque<>();
     	for(int i=1;i<=V;i++) {
-    		if(!listIn.containsKey(i)) q.offer(i); // 들어오는 간선이 없는 지점을 큐에 추가
+    		if(!listIn.containsKey(i)) {
+    			q.offer(i); // 들어오는 간선이 없는 지점을 큐에 추가
+    			visited[i] = true;
+    		}
     	}
     	while(!q.isEmpty()) {
     		int curr = q.poll();
 //    		System.out.println(curr);
-    		visited[curr] = true;
     		if(listOut.containsKey(curr)) {
     			for(int next : listOut.get(curr)) {
     				if(visited[next]) continue;
     				boolean possible=true;
-    				if(visited[next]) System.out.println(t+ " "+curr);
     				for(int toNext : listIn.get(next)) { // next 노드의 선행 노드들
     					if(!visited[toNext]) { // 선행 노드 중 아직 방문하지 않는 노드가 있을 경우
     						possible=false;
@@ -50,16 +51,6 @@ public class Solution {
     					}
     				}
     				if(possible) {
-    					if(t==6) {
-    						for(int toNext : listIn.get(next)) {
-    							System.out.print(toNext+" ");
-    						}
-    						System.out.println();
-    						for(int toNext : listIn.get(next)) {
-    							System.out.print(visited[toNext]+" ");
-    						}
-    						System.out.println();
-    					}
     					visited[next] = true;
     					q.offer(next);
     				}
