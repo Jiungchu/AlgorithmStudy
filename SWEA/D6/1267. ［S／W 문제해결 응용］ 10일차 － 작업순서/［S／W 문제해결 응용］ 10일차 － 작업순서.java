@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,8 +14,8 @@ public class Solution {
 	static StringBuilder sb = new StringBuilder();
 	
 	static int V, E, t;
-    static Map<Integer, List<Integer>> listOut;
-    static int[] inDegree;
+    static Map<Integer, List<Integer>> listIn, listOut;
+    static boolean[] visited;
 
     public static void main(String[] args) throws Exception {
         
@@ -33,15 +32,35 @@ public class Solution {
     	
     	Queue<Integer> q = new ArrayDeque<>();
     	for(int i=1;i<=V;i++) {
-    		if(inDegree[i]==0) q.offer(i); // 들어오는 간선이 없는 지점을 큐에 추가
+    		if(!listIn.containsKey(i)) q.offer(i); // 들어오는 간선이 없는 지점을 큐에 추가
     	}
     	while(!q.isEmpty()) {
     		int curr = q.poll();
 //    		System.out.println(curr);
+    		visited[curr] = true;
     		if(listOut.containsKey(curr)) {
     			for(int next : listOut.get(curr)) {
-    				inDegree[next]--;
-    				if(inDegree[next]==0) {
+    				if(visited[next]) continue;
+    				boolean possible=true;
+    				if(visited[next]) System.out.println(t+ " "+curr);
+    				for(int toNext : listIn.get(next)) { // next 노드의 선행 노드들
+    					if(!visited[toNext]) { // 선행 노드 중 아직 방문하지 않는 노드가 있을 경우
+    						possible=false;
+    						break; 
+    					}
+    				}
+    				if(possible) {
+    					if(t==6) {
+    						for(int toNext : listIn.get(next)) {
+    							System.out.print(toNext+" ");
+    						}
+    						System.out.println();
+    						for(int toNext : listIn.get(next)) {
+    							System.out.print(visited[toNext]+" ");
+    						}
+    						System.out.println();
+    					}
+    					visited[next] = true;
     					q.offer(next);
     				}
     			}
@@ -56,19 +75,20 @@ public class Solution {
         V = Integer.parseInt(st.nextToken());
         E = Integer.parseInt(st.nextToken());
         
-        // 나가는 간선을 관리
+        // 들어오는 간선, 나가는 간선을 따로 관리
+        listIn = new HashMap<>();
         listOut = new HashMap<>();
-        inDegree = new int[V+1];
+        visited = new boolean[V+1];
         
         st = new StringTokenizer(br.readLine());
         for(int i=0;i<E;i++) {
         	int start = Integer.parseInt(st.nextToken());
         	int end= Integer.parseInt(st.nextToken());
         	
+        	if(!listIn.containsKey(end)) listIn.put(end, new ArrayList<>());
         	if(!listOut.containsKey(start)) listOut.put(start, new ArrayList<>());
+        	listIn.get(end).add(start); // 들어오는 간선
         	listOut.get(start).add(end); // 나가는 간선
-        	
-        	inDegree[end]++; //  들어오는 간선의 개수 증가
         }
     }
 }
