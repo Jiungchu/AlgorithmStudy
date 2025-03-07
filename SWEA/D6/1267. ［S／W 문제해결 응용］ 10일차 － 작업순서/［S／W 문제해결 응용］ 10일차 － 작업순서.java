@@ -34,15 +34,14 @@ public class Solution {
     	for(int i=1;i<=V;i++) {
     		if(!listIn.containsKey(i)) {
     			q.offer(i); // 들어오는 간선이 없는 지점을 큐에 추가
-    			visited[i] = true;
     		}
     	}
     	while(!q.isEmpty()) {
     		int curr = q.poll();
+            visited[curr]=true;
 //    		System.out.println(curr);
     		if(listOut.containsKey(curr)) {
     			for(int next : listOut.get(curr)) {
-    				if(visited[next]) continue;
     				boolean possible=true;
     				for(int toNext : listIn.get(next)) { // next 노드의 선행 노드들
     					if(!visited[toNext]) { // 선행 노드 중 아직 방문하지 않는 노드가 있을 경우
@@ -51,7 +50,6 @@ public class Solution {
     					}
     				}
     				if(possible) {
-    					visited[next] = true;
     					q.offer(next);
     				}
     			}
