@@ -1,0 +1,3 @@
+SELECT ANIMAL_ID, NAME,
+IF(SEX_UPON_INTAKE like 'Neu%' or SEX_UPON_INTAKE like 'Spay%','O','X') '중성화'
+FROM ANIMAL_INS
