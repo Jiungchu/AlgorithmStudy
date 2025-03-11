@@ -1,0 +1,7 @@
+ SELECT CAR_TYPE, COUNT(*) 'CARS'
+FROM CAR_RENTAL_COMPANY_CAR 
+where OPTIONS like '%가죽%'
+or OPTIONS like '%열선%'
+or OPTIONS like '%통풍%'
+GROUP BY CAR_TYPE
+ORDER BY 1
