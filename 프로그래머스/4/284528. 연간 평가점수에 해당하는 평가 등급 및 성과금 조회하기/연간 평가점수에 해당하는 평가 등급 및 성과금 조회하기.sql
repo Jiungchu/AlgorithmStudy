@@ -1,0 +1,18 @@
+SELECT E.EMP_NO, EMP_NAME,
+if(SCORE>=96,'S',
+  if(SCORE>=90,'A',
+     if(SCORE>=80,'B','C'
+  ))) GRADE,
+SAL * if(SCORE>=96,0.2,
+        if(SCORE>=90,0.15,
+           if(SCORE>=80,0.1,0
+  ))) BONUS
+FROM HR_EMPLOYEES E
+JOIN (
+    SELECT EMP_NO, avg(SCORE) SCORE 
+    FROM HR_GRADE
+    GROUP BY EMP_NO
+) G
+    ON E.EMP_NO = G.EMP_NO
+GROUP BY 1
+ORDER BY 1
