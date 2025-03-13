@@ -1,0 +1,29 @@
+WITH GRADE_TABLE AS (
+SELECT  
+CASE
+    WHEN EXISTS (
+            SELECT 1
+            FROM SKILLCODES C
+            WHERE CATEGORY='Front End'
+            AND D.SKILL_CODE & C.CODE > 0
+        ) THEN CASE
+            WHEN SKILL_CODE & 
+                (SELECT CODE FROM SKILLCODES WHERE NAME='Python')>0
+                THEN 'A'
+            WHEN SKILL_CODE & 
+                (SELECT CODE FROM SKILLCODES WHERE NAME='C#')>0
+                THEN 'B'
+            ELSE 'C'
+        END
+    WHEN SKILL_CODE & (SELECT CODE FROM SKILLCODES WHERE NAME='C#')>0
+        THEN 'B'    
+END GRADE,
+ID, EMAIL
+FROM    DEVELOPERS D
+)
+
+SELECT *
+FROM GRADE_TABLE
+WHERE GRADE IS NOT NULL
+ORDER BY 1, 2
+
