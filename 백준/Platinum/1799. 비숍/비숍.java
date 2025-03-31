@@ -21,7 +21,7 @@ public class Main {
 	static void solution(int index, int count) {
 		if(count>maxCount) maxCount = count;
 		
-		if(index>=2*N-1 || count+2*N-1-index<maxCount) return;
+		if(index>=2*N-1 || count+2*N-1-index<=maxCount) return;
 		
 		for(int[] next : diagPoints.get(index)) {
 			int r = next[0], c = next[1];
