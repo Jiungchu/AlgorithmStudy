@@ -37,7 +37,7 @@ public class Solution {
 			minSum = length;
 		}
 		// 모든 코어를 다 고려한 경우 return
-		if(index>=cores.size()) return;
+		if(index>=cores.size() || connected+cores.size()-index<maxConnected) return;
 		
 		int r = cores.get(index)[0], c = cores.get(index)[1];
 		for(int d=0;d<4;d++) {
