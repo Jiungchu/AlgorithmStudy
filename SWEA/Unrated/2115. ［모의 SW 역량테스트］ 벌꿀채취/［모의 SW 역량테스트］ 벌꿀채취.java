@@ -58,17 +58,10 @@ public class Solution {
     static int getMax() {
         int max = 0;
         
-        for (int i1 = 0; i1 < N; i1++) {
-            for (int j1 = 0; j1 <= N - M; j1++) {
-                for (int i2 = i1; i2 < N; i2++) {
-                    for (int j2 = 0; j2 <= N - M; j2++) {
-                        if (i1 == i2 && j1 + M > j2) continue;
-                        max= Math.max(max, dp[i1][j1] + dp[i2][j2]);
-                    }
-                }
-            }
-        }
-        
+		for (int i = 0; i < N; i++)
+			Arrays.sort(dp[i]);
+		Arrays.sort(dp, (a, b) -> b[N - M] - a[N - M]);
+        max = dp[0][N-M]+dp[1][N-M];
         return max;
     }
 }
