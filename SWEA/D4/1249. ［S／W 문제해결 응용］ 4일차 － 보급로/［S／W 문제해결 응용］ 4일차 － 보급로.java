@@ -25,15 +25,17 @@ public class Solution {
 		// pq에 r, c, 시작점에서 현재까지 가중치를 저장
 		PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[2]-b[2]);
 		pq.add(new int[] {0,0,0});
+		weights[0][0] = 0;
 		while(!pq.isEmpty()) {
 			int[] cur = pq.poll();
 			int r = cur[0], c = cur[1], weight=cur[2];
-			if(weights[r][c]<weight) continue;
-			weights[r][c] = weight;
+			// 이미 최적 경로가 개선된 경우
+			if(weights[r][c]!=weight) continue;
 			for(int d=0;d<4;d++) {
 				int nr = r+dr[d], nc = c+dc[d];
 				if(nr>=0&&nr<N && nc>=0&&nc<N && weight+map[nr][nc]<weights[nr][nc]) {
 					pq.add(new int[] {nr,nc,weight+map[nr][nc]});
+					weights[nr][nc] = weight+map[nr][nc];
 				}
 			}
 		}
