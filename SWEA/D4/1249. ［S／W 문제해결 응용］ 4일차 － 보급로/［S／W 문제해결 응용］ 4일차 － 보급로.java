@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 
-public class Solution {
+public class Solution{
 	static class Node implements Comparable<Node>{
 		int r;
 		int c;
@@ -34,14 +34,14 @@ public class Solution {
 		int T = Integer.parseInt(br.readLine());
 		for(t=1;t<=T;t++) {
 			init();
-			solution();
+			sb.append("#").append(t).append(" ").append(solution()).append("\n");
 		}
 		System.out.println(sb.toString());
 	}
 	
 	static int[] dr = {1,-1,0,0}, dc= {0,0,1,-1};
 	
-	static void solution() {
+	static int solution() {
 		// pq에 r, c, 시작점에서 현재까지 가중치를 저장
 		PriorityQueue<Node> pq = new PriorityQueue<>();
 		pq.add(new Node(0,0,0));
@@ -50,6 +50,7 @@ public class Solution {
 			Node n = pq.poll();
 			// 이미 최적 경로가 개선된 경우
 			if(weights[n.r][n.c]!=n.cost) continue;
+			if(n.r == N-1 && n.c==N-1) return n.cost;
 			for(int d=0;d<4;d++) {
 				int nr = n.r+dr[d], nc = n.c+dc[d];
 				if(nr>=0&&nr<N && nc>=0&&nc<N && n.cost+map[nr][nc]<weights[nr][nc]) {
@@ -58,7 +59,7 @@ public class Solution {
 				}
 			}
 		}
-		sb.append("#").append(t).append(" ").append(weights[N-1][N-1]).append("\n");
+		return -1;
 	}
 	
 	static void init() throws IOException {
