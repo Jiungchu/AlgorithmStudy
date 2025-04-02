@@ -5,6 +5,26 @@ import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 
 public class Solution {
+	static class Node implements Comparable<Node>{
+		int r;
+		int c;
+		int cost;
+		
+		public Node() {}
+		public Node(int r, int c, int cost) {
+			super();
+			this.r = r;
+			this.c = c;
+			this.cost = cost;
+		}
+
+		@Override
+		public int compareTo(Node o) {
+			return this.cost-o.cost;
+		}
+		
+	}
+	
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
 	
@@ -23,19 +43,18 @@ public class Solution {
 	
 	static void solution() {
 		// pq에 r, c, 시작점에서 현재까지 가중치를 저장
-		PriorityQueue<int[]> pq = new PriorityQueue<>((a,b)->a[2]-b[2]);
-		pq.add(new int[] {0,0,0});
+		PriorityQueue<Node> pq = new PriorityQueue<>();
+		pq.add(new Node(0,0,0));
 		weights[0][0] = 0;
 		while(!pq.isEmpty()) {
-			int[] cur = pq.poll();
-			int r = cur[0], c = cur[1], weight=cur[2];
+			Node n = pq.poll();
 			// 이미 최적 경로가 개선된 경우
-			if(weights[r][c]!=weight) continue;
+			if(weights[n.r][n.c]!=n.cost) continue;
 			for(int d=0;d<4;d++) {
-				int nr = r+dr[d], nc = c+dc[d];
-				if(nr>=0&&nr<N && nc>=0&&nc<N && weight+map[nr][nc]<weights[nr][nc]) {
-					pq.add(new int[] {nr,nc,weight+map[nr][nc]});
-					weights[nr][nc] = weight+map[nr][nc];
+				int nr = n.r+dr[d], nc = n.c+dc[d];
+				if(nr>=0&&nr<N && nc>=0&&nc<N && n.cost+map[nr][nc]<weights[nr][nc]) {
+					pq.add(new Node(nr,nc,map[nr][nc]+n.cost));
+					weights[nr][nc] = n.cost+map[nr][nc];
 				}
 			}
 		}
