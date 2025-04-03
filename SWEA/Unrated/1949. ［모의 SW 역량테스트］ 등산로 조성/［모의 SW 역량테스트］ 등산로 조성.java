@@ -12,6 +12,7 @@ public class Solution {
 
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
         StringTokenizer st;
         int T = Integer.parseInt(br.readLine());
         for (int t = 0; t < T; t++) {
@@ -39,12 +40,14 @@ public class Solution {
             }
 
             for (int[] curr : maxList) {
+            	// 백트래킹을 위해 방문 이후 visited를 false로 설정
                 visited[curr[0]][curr[1]] = true;
                 dfs(curr[0], curr[1], maxHeight, 1, false);
                 visited[curr[0]][curr[1]] = false;
             }
-            System.out.println("#" + (t + 1) + " " + maxLength);
+            sb.append("#").append(t+1).append(" ").append(maxLength).append("\n");
         }
+        System.out.println(sb.toString());
         br.close();
     }
 
