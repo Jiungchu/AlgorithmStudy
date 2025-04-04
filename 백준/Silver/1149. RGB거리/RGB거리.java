@@ -1,37 +1,49 @@
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int[][] rgbCost = new int[n][3];
-        
-        for (int i = 0; i < n; i++) {
-            rgbCost[i][0] = sc.nextInt(); // R
-            rgbCost[i][1] = sc.nextInt(); // G
-            rgbCost[i][2] = sc.nextInt(); // B
-        }
-
-        // DP 테이블 선언
-        int[][] dp = new int[n][3];
-
-        // 초기값 설정
-        dp[0][0] = rgbCost[0][0];
+	
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	
+	static int N, rgbCost[][];
+	
+	public static void main(String[] args) throws IOException {
+		init();
+		solution();
+	}
+	
+	static void solution() {
+		// i번 집을 각각 r, g, b로 칠했을 때의 최소 비용을 dp에 저장
+		int[][] dp = new int[N][3];
+		// 초기화
+		dp[0][0] = rgbCost[0][0];
         dp[0][1] = rgbCost[0][1];
         dp[0][2] = rgbCost[0][2];
-
-        // 점화식을 이용하여 DP 테이블 채우기
-        for (int i = 1; i < n; i++) {
+        
+        // i-1에 칠해진 색을 제외한 최소값을 사용해서 dp 업데이트
+        for (int i = 1; i < N; i++) {
             dp[i][0] = rgbCost[i][0] + Math.min(dp[i - 1][1], dp[i - 1][2]);
             dp[i][1] = rgbCost[i][1] + Math.min(dp[i - 1][0], dp[i - 1][2]);
             dp[i][2] = rgbCost[i][2] + Math.min(dp[i - 1][0], dp[i - 1][1]);
         }
+        
+        int ans = Math.min(dp[N-1][0], Math.min(dp[N-1][1], dp[N-1][2]));
+        System.out.println(ans);
+	}
+	
+	static void init() throws IOException{
+		N = Integer.parseInt(br.readLine());
+		rgbCost = new int[N][3];
+		for(int i=0;i<N;i++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			for(int j=0;j<3;j++) {
+				rgbCost[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+	}
 
-        // 최솟값 출력 (마지막 집을 칠할 때 최소 비용)
-        int result = Math.min(dp[n - 1][0], Math.min(dp[n - 1][1], dp[n - 1][2]));
-        System.out.println(result);
-
-        sc.close();
-    }
 }
+
