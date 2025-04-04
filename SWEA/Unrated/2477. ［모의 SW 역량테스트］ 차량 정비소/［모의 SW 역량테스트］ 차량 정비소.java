@@ -34,7 +34,7 @@ public class Solution {
 		
 		int ans = 0;
 		// 시뮬레이션 돌리기
-		for(int t=0;t<=5000;t++) {
+		for(int t=0;t<=Integer.MAX_VALUE;t++) {
 			// 도착한 고객을 접수 큐에 넣기
 			while(!customers.isEmpty() && customers.peek()[1]<=t) {
 				q1.offer(customers.poll()[0]);
@@ -63,6 +63,21 @@ public class Solution {
 				if(!q1.isEmpty() && receptionState[i]==null) {
 					receptionState[i] = new int[] {q1.poll(), t+ai[i]};
 				}
+			}
+			
+			if(customers.isEmpty() && q1.isEmpty() && q2.isEmpty()) {
+				boolean flag = true;
+				for(int i=0;i<N;i++) {
+					if(flag && receptionState[i] != null) {
+						flag = false; break;
+					}
+				}
+				for(int i=0;i<M;i++) {
+					if(flag && repairState[i] != null) {
+						flag = false; break;
+					}
+				}
+				if(flag) break;
 			}
 		}
 		ans = ans==0?-1:ans;
