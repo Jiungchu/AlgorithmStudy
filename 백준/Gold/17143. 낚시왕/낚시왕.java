@@ -76,7 +76,6 @@ public class Main {
 				if(cur.isDead) continue; // 이미 죽은 상어는 고려하지 않음
 				if(cur.equals(map[cur.r][cur.c])) map[cur.r][cur.c]=null; // map에서 제거
 				int move = cur.s;
-//				System.out.print(cur+" -> ");
 				// 좌우로 이동할 때, R-1번 이동하면, 좌표는 R-r로 바뀌고 방향이 반대가 됨
 				if(cur.d == 1 || cur.d == 2) {
 					int times = cur.s/(R-1);
@@ -86,6 +85,15 @@ public class Main {
 						cur.d = cur.d%2==0?cur.d-1:cur.d+1;
 						cur.r = R-cur.r-1;
 					}
+					// 직진했을 때 벽에 닿는지 확인. 닿으면 적절하게 이동
+					int nr = cur.r+dr[cur.d]*move;
+					if(cur.d==1 && nr<=0) {
+						cur.d=2;
+						cur.r = -nr; 
+					} else if(cur.d==2 && nr>=R-1) {
+						cur.d=1;
+						cur.r = 2*(R-1)-nr;
+					} else cur.r = nr;
 				}
 				else {
 					int times = cur.s/(C-1);
@@ -94,23 +102,18 @@ public class Main {
 						cur.d = cur.d%2==0?cur.d-1:cur.d+1;
 						cur.c = C-cur.c-1;
 					}
-				}
-				// 나머지는 직접 이동
-				int nr = cur.r, nc = cur.c;
-				while(move>0) {
-					nr = cur.r + dr[cur.d];
-					nc = cur.c + dc[cur.d];
-					if(( cur.d<=2 && (nr==0 || nr==R-1)) || (cur.d>=3 && ( nc==0 || nc==C-1))) {
-						cur.d = cur.d%2==0?cur.d-1:cur.d+1;
-					}
-					cur.r = nr; cur.c=nc;
-					move--;
+					int nc = cur.c+dc[cur.d]*move;
+					if(cur.d==4 && nc<=0) {
+						cur.d=3;
+						cur.c = -nc; 
+					} else if(cur.d==3 && nc>=C-1) {
+						cur.d=4;
+						cur.c = 2*(C-1)-nc;
+					} else cur.c = nc;
 				}
 				cur.t++; // 시점 업데이트 
-//				System.out.println(cur);
 				Shark prev = map[cur.r][cur.c]; // 현재 상어와 같은 위치에 있는지 확인
 				if(prev!=null && prev.t == cur.t) {
-//					System.out.println(prev+" , "+cur);
 					if(cur.z>prev.z) {
 						map[cur.r][cur.c] = cur;
 						prev.isDead = true; // 이미 큐에 들어가 있으므로 죽은 것으로 처리
@@ -122,7 +125,6 @@ public class Main {
 					q.offer(cur);
 				}
 			}
-//			System.out.println(q);
 		}
 		System.out.println(ans);
 	}
