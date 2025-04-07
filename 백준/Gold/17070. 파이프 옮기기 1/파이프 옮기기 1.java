@@ -2,31 +2,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main {
-	static class Pipe {
-		int lr, lc, rr, rc, d;
-
-		public Pipe(int lr, int lc, int rr, int rc, int d) {
-			super();
-			this.lr = lr;
-			this.lc = lc;
-			this.rr = rr;
-			this.rc = rc;
-			this.d = d;
-		}
-
-		@Override
-		public String toString() {
-			return "Pipe [lr=" + lr + ", lc=" + lc + ", rr=" + rr + ", rc=" + rc + ", d=" + d + "]";
-		}
-		
-	}
-	
+public class Main{
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
 	static int N, map[][], dp[][][];
@@ -35,12 +13,6 @@ public class Main {
 		init();
 		solution();
 	}
-	
-	static int[][][] dir = {
-			{{ 0,1,0,1,0},{0,1,1,1,2}}, // 가로 방향
-			{{ 1,0,1,0,1},{1,0,1,1,2}}, // 세로 방향
-			{{ 1,1,0,1,0},{1,1,1,0,1},{1,1,1,1,2}} // 대각선
-	};
 	
 	static void solution() {
 		// 행, 열, 방향별로 dp 시용 
