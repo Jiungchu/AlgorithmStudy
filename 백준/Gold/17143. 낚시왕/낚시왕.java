@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -145,7 +144,11 @@ public class Main {
 			int s = Integer.parseInt(st.nextToken());
 			int d = Integer.parseInt(st.nextToken());
 			int z = Integer.parseInt(st.nextToken());
-			if((r==0 && d==1) || (c==C-1 && d==3)) d += 1;
+			
+            if (d <= 2) s %= (R - 1) * 2;
+			else s %= (C - 1) * 2;
+            
+            if((r==0 && d==1) || (c==C-1 && d==3)) d += 1;
 			else if ((r==R-1 && d==2) || (c==0 && d==4)) d -= 1; 
 			
 			Shark shark = new Shark(r,c,s,d,z,0);
