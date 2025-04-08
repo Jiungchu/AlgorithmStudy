@@ -12,7 +12,7 @@ public class Solution {
 	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringBuilder sb = new StringBuilder();
 	
-	static int t, ans, N, map[][];
+	static int t, ans, N, map[][], blockDir[][];
 	static Map<Integer, Integer> wormhalls;
 	
 	public static void main(String[] args) throws IOException {
@@ -28,10 +28,10 @@ public class Solution {
 		for(int i=0;i<N;i++) {
 			for(int j=0;j<N;j++) {
 				if(map[i][j]!=0) continue;
-				for(int d=0;d<4;d++) {
-					int score = go(i,j,d);
-					ans = Math.max(ans, score);
-				}
+                for(int d=0;d<4;d++) {
+                    int score = go(i, j, d);
+                    ans = Math.max(ans, score);
+                }
 			}
 		}
 		sb.append("#").append(t).append(" ").append(ans).append("\n");
@@ -45,31 +45,22 @@ public class Solution {
 		int score = 0;
 		while(true) {
 			// 벽에 닿는 경우
+//			System.out.println(nr+" "+nc+" "+d);
 			if(nr<0 || nr>=N || nc<0 || nc>=N) {
 				d = (d+2)%4;
 				score++;
 			} else {
 				int cur = map[nr][nc];
-				if(cur==-1 || (nr==r && nc==c)) {
+				if(cur==-1 || (nr==r && nc==c)) { // 다시 돌아오거나 블랙홀로 이동한 경우
 					break;
-				} else if(cur>=6 && cur<=10) {
+				} else if(cur>=6 && cur<=10) { // 웜홀을 만난 경우 map을 통해 바로 상대 웜호롤 이동
 					int key = (nr<<10)+nc;
 					int value = wormhalls.get(key);
 					nr = value>>10;
 					nc = value & ((1<<10)-1);
 				} else if(cur>0 && cur<=5){ // 1~5번 블록에 부딪히는 경우
 					score++;
-					// 반대 방향으로 전환하는 경우
-					if(cur==5  
-					|| ((cur==1)&&(d==1 || d==2)) 
-					|| ((cur==2)&&(d==2 || d==3))
-					|| ((cur==3)&&(d==3 || d==0))
-					|| ((cur==4)&&(d==0 || d==1))) d = (d+2)%4;
-					else if(cur%2==1) { // 1, 3번 모양
-						d = d%2==0?(d+1)%4:(d-1+4)%4;
-					} else { // 2, 4번 모양
-						d = d%2==1?(d+1)%4:(d-1+4)%4;
-					}
+					d = blockDir[cur][d];
 				}
 			}
 			nr += dr[d]; nc += dc[d];
@@ -100,6 +91,21 @@ public class Solution {
 						wormhalls.put(key2, key1);
 					} else {
 						holes[num-5] = (i<<10)+j;
+					}
+				}
+			}
+		}
+		
+		// 블록 모양별로 방향을 매핑
+		blockDir = new int[6][4];
+		for(int i=1;i<=5;i++) {
+			for(int j=0;j<4;j++) {
+				if(i==5 || (j==i%4 || j==(i+1)%4)) blockDir[i][j] = (j+2)%4;
+				else {
+					if(i%2==1) { // 1, 3번 모양
+						blockDir[i][j] = j%2==0?(j+1)%4:(j-1+4)%4;
+					} else { // 2, 4번 모양
+						blockDir[i][j] = j%2==1?(j+1)%4:(j-1+4)%4;
 					}
 				}
 			}
