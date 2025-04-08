@@ -25,14 +25,14 @@ public class Solution {
 	}
 	
 	static void solution() {
-		for(int i=0;i<N;i++) {
-			for(int j=0;j<N;j++) {
-				if(map[i][j]!=0) continue;
-				for(int d=0;d<4;d++) {
-					int score = go(i,j,d,i,j);
-					ans = Math.max(ans, score);
-				}
-			}
+		for (int i = 1; i <= N; i++) {
+		    for (int j = 1; j <= N; j++) {
+		        if (map[i][j] != 0) continue;
+		        for (int d = 0; d < 4; d++) {
+		            int score = go(i, j, d, i, j);
+		            ans = Math.max(ans, score);
+		        }
+		    }
 		}
 		sb.append("#").append(t).append(" ").append(ans).append("\n");
 	}
@@ -44,10 +44,6 @@ public class Solution {
 	    int nr = r + dr[d];
 	    int nc = c + dc[d];
 	    int score = 0;
-
-	    if (nr < 0 || nr >= N || nc < 0 || nc >= N) {
-	        return 1 + go(nr, nc, (d + 2) % 4, sr, sc); 
-	    }
 
 	    int cur = map[nr][nc];
 
@@ -62,7 +58,7 @@ public class Solution {
 	        nr = value >> 10;
 	        nc = value & ((1 << 10) - 1);
 	    } else if (cur >= 1 && cur <= 5) {
-	        d = blockDir[cur][d]; // 매핑된 배열을 사용
+	        d = blockDir[cur][d];
 	        score++;
 	    }
 
@@ -72,29 +68,34 @@ public class Solution {
 	
 	static void init() throws IOException{
 		N = Integer.parseInt(br.readLine().trim());
-		map = new int[N][N];
+		map = new int[N + 2][N + 2]; // 확장된 맵
 		ans = 0;
-		
+
+		// 바깥 경계를 모두 5번 블록으로 채움
+		for (int i = 0; i < N + 2; i++) {
+		    map[0][i] = map[N + 1][i] = 5;
+		    map[i][0] = map[i][N + 1] = 5;
+		}
+
 		wormhalls = new HashMap<>();
 		int[] holes = new int[6];
 		Arrays.fill(holes, -1);
-		for(int i=0;i<N;i++) {
-			StringTokenizer st = new StringTokenizer(br.readLine().trim());
-			for(int j=0;j<N;j++) {
-				int num = Integer.parseInt(st.nextToken());
-				map[i][j] = num;
-				if(num>=6 && num<=10) {
-					// 저장된 hole이 있다면 양방향 연결
-					if(holes[num-5] != -1) {
-						int key1 = holes[num-5];
-						int key2 = (i<<10)+j;
-						wormhalls.put(key1, key2);
-						wormhalls.put(key2, key1);
-					} else {
-						holes[num-5] = (i<<10)+j;
-					}
-				}
-			}
+		for (int i = 1; i <= N; i++) {
+		    StringTokenizer st = new StringTokenizer(br.readLine().trim());
+		    for (int j = 1; j <= N; j++) {
+		        int num = Integer.parseInt(st.nextToken());
+		        map[i][j] = num;
+		        if (num >= 6 && num <= 10) {
+		            if (holes[num - 5] != -1) {
+		                int key1 = holes[num - 5];
+		                int key2 = (i << 10) + j;
+		                wormhalls.put(key1, key2);
+		                wormhalls.put(key2, key1);
+		            } else {
+		                holes[num - 5] = (i << 10) + j;
+		            }
+		        }
+		    }
 		}
 		
 		// 블록 모양별로 방향을 매핑
