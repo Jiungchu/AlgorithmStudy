@@ -28,10 +28,10 @@ public class Solution {
 		for(int i=0;i<N;i++) {
 			for(int j=0;j<N;j++) {
 				if(map[i][j]!=0) continue;
-                for(int d=0;d<4;d++) {
-                    int score = go(i, j, d);
-                    ans = Math.max(ans, score);
-                }
+				for(int d=0;d<4;d++) {
+					int score = go(i,j,d,i,j);
+					ans = Math.max(ans, score);
+				}
 			}
 		}
 		sb.append("#").append(t).append(" ").append(ans).append("\n");
@@ -40,34 +40,35 @@ public class Solution {
 	// 시계 방향
 	static int[] dr = {0,-1,0,1}, dc = {-1,0,1,0};
 	
-	static int go(int r, int c, int d) {
-		int nr = r+dr[d]; int nc= c+dc[d];
-		int score = 0;
-		while(true) {
-			// 벽에 닿는 경우
-//			System.out.println(nr+" "+nc+" "+d);
-			if(nr<0 || nr>=N || nc<0 || nc>=N) {
-				d = (d+2)%4;
-				score++;
-			} else {
-				int cur = map[nr][nc];
-				if(cur==-1 || (nr==r && nc==c)) { // 다시 돌아오거나 블랙홀로 이동한 경우
-					break;
-				} else if(cur>=6 && cur<=10) { // 웜홀을 만난 경우 map을 통해 바로 상대 웜호롤 이동
-					int key = (nr<<10)+nc;
-					int value = wormhalls.get(key);
-					nr = value>>10;
-					nc = value & ((1<<10)-1);
-				} else if(cur>0 && cur<=5){ // 1~5번 블록에 부딪히는 경우
-					score++;
-					d = blockDir[cur][d];
-				}
-			}
-			nr += dr[d]; nc += dc[d];
-		}
-		return score;
-		
+	static int go(int r, int c, int d, int sr, int sc) {
+	    int nr = r + dr[d];
+	    int nc = c + dc[d];
+	    int score = 0;
+
+	    if (nr < 0 || nr >= N || nc < 0 || nc >= N) {
+	        return 1 + go(nr, nc, (d + 2) % 4, sr, sc); 
+	    }
+
+	    int cur = map[nr][nc];
+
+	    // 종료 조건
+	    if (cur == -1 || (nr == sr && nc == sc)) {
+	        return 0;
+	    }
+
+	    if (cur >= 6) {
+	        int key = (nr << 10) + nc;
+	        int value = wormhalls.get(key);
+	        nr = value >> 10;
+	        nc = value & ((1 << 10) - 1);
+	    } else if (cur >= 1 && cur <= 5) {
+	        d = blockDir[cur][d]; // 매핑된 배열을 사용
+	        score++;
+	    }
+
+	    return score + go(nr, nc, d, sr, sc);
 	}
+
 	
 	static void init() throws IOException{
 		N = Integer.parseInt(br.readLine().trim());
