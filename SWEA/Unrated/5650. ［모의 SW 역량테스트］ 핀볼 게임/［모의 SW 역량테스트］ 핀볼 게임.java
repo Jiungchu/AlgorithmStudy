@@ -44,26 +44,26 @@ public class Solution {
 	    int nr = r + dr[d];
 	    int nc = c + dc[d];
 	    int score = 0;
-
-	    int cur = map[nr][nc];
-
-	    // 종료 조건
-	    if (cur == -1 || (nr == sr && nc == sc)) {
-	        return 0;
+	    while (true) {
+	        int cur = map[nr][nc];
+	        if (cur == -1 || (nr == sr && nc == sc)) {
+	            break;
+	        }
+	        if (cur >= 6) { // 웜홀
+	            int key = (nr << 10) + nc;
+	            int value = wormhalls.get(key);
+	            nr = value >> 10;
+	            nc = value & ((1 << 10) - 1);
+	        } else if (cur >= 1 && cur <= 5) { // 블록
+	            d = blockDir[cur][d];
+	            score++;
+	        }
+	        nr += dr[d];
+	        nc += dc[d];
 	    }
-
-	    if (cur >= 6) {
-	        int key = (nr << 10) + nc;
-	        int value = wormhalls.get(key);
-	        nr = value >> 10;
-	        nc = value & ((1 << 10) - 1);
-	    } else if (cur >= 1 && cur <= 5) {
-	        d = blockDir[cur][d];
-	        score++;
-	    }
-
-	    return score + go(nr, nc, d, sr, sc);
+	    return score;
 	}
+
 
 	
 	static void init() throws IOException{
