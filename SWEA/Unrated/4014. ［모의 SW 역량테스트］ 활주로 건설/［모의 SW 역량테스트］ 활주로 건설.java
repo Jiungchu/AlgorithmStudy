@@ -3,104 +3,80 @@ import java.util.*;
 import java.io.*;
 
 public class Solution {
-	static int[][] grid;
-	static int count;
+	
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringBuilder sb = new StringBuilder();
+	
+	static int N, X, maps[][][], count, t;
+	
 	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T =Integer.parseInt(br.readLine());
-		for(int t=0;t<T;t++) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			int n = Integer.parseInt(st.nextToken());
-			int x = Integer.parseInt(st.nextToken());
-			count=0;
-			grid = new int[n][n];
-			for(int i=0;i<n;i++) {
-				st = new StringTokenizer(br.readLine());
-				boolean possible = true;
-				boolean down = false;
-				int continuous=0;
-				for(int j=0;j<n;j++) {
-					int num = Integer.parseInt(st.nextToken());
-					grid[i][j] = num;
-					if(!possible) continue;
-					if(j==0) {
-						continuous = 1; continue;
-					} else if(!down){ // 내려가는 길이 아니면
-						if(grid[i][j-1]==num) { // 높이가 같은 경우
-							continuous++;
-						} else if(grid[i][j-1]<num) { // 올라가는 길
-							if(continuous<x || num-grid[i][j-1]>1) { // 평지가 x만큼 연속되지 않았거나 1 이상 커지면
-								possible = false;
-								continue; 
-							}
-							continuous = 1; // 충분하다면 다시 그대로 진행
-						}
-						else { // 내려가는 길
-							if(grid[i][j-1]-num>1) {
-								possible=false; continue;
-							}
-							down = true;
-							continuous = 1;
-						}
-					} else {
-						if(continuous<x && grid[i][j-1]!=num) {
-							// 아직 x만큼 연속되지 않았는데 지형이 변하면
-							possible = false; continue;
-						} else if(grid[i][j-1]==num) {
-							continuous++;
-							if(continuous==x) {
-								down=false; // 경사로 설치 완료
-								continuous = 0; // 겹쳐서 설치할 수 없으므로 연속된 칸은 0
-							}
-						}
-					}
-				}
-				if(possible && !down) count++; // 내리막 경사로 설치가 마무리되지 않으면 설치가 불가능하므로
-			}
-			for(int j=0;j<n;j++) {
-				boolean possible = true;
-				boolean down = false;
-				int continuous=0;
-				for(int i=0;i<n;i++) {
-					int num = grid[i][j];
-					if(!possible) break;
-					if(i==0) {
-						continuous = 1; continue;
-					} else if(!down){ // 내려가는 길이 아니면
-						if(grid[i-1][j]==num) { // 높이가 같은 경우
-							continuous++;
-						} else if(grid[i-1][j]<num) { // 올라가는 길
-							if(continuous<x || num-grid[i-1][j]>1) { // 평지가 x만큼 연속되지 않았다면 
-								possible = false;
-								continue; 
-							}
-							continuous = 1; // 충분하다면 다시 그대로 진행
-						} else { // 내려가는 길
-							if(grid[i-1][j]-num>1) {
-								possible=false; continue;
-							}
-							down = true;
-							continuous = 1;
-						}
-					} else {
-						if(continuous<x && grid[i-1][j]!=num) {
-							// 아직 x만큼 연속되지 않았는데 지형이 변하면
-							possible = false; continue;
-						} else if(grid[i-1][j]==num) {
-							continuous++;
-							if(continuous==x) {
-								down=false; // 경사로 설치 완료
-								continuous = 0; // 겹쳐서 설치할 수 없으므로 연속된 칸은 0
-							}
-						}
-					}
-				}
-				if(possible && !down) count++;
-			}
-			System.out.println("#"+(t+1)+" "+count);
+		for(t=1;t<=T;t++) {
+			init();
+			solution();
 		}
-		
+		System.out.println(sb);
 		br.close();
+	}
+	
+	static void solution() {
+		int ans=0;
+		for(int i=0;i<N;i++) {
+			if(check(i,0)) ans++;
+			if(check(i,1)) ans++;
+		}
+		sb.append("#").append(t).append(" ").append(ans).append("\n");
+	}
+	
+	static boolean check(int rowNum, int mapNum) {
+		int[] road = maps[mapNum][rowNum];
+		
+		int flat = 1; // 연속된 평지의 길이
+		boolean isDownhill = false; // 현재 내리막 경사로인지
+		
+		for(int i=0;i<N-1;i++) {
+			int cur = road[i], next=road[i+1];
+			if(Math.abs(cur-next)>1) return false; // 2 이상 차이가 나는 블록
+			
+			if(cur==next) {
+				flat++;
+				if(isDownhill && flat==X) { // 내리막 종료
+					flat = 0; isDownhill = false;
+				} 
+			} else {
+				if(isDownhill && flat!=0) return false; // 경사로가 끝나지 않았는데, 다시 경사로가 나온 경우
+				if(cur>next) { // 내리막
+					isDownhill = true;
+					flat = 1;
+				} else { // 오르막, 지금까지 평지가 X 이상이면 바로 설치, 평지가 X보다 짧으 설치 불가능
+					if(flat<X) return false; 
+					flat = 1;
+				}
+			}
+			
+		}
+		if(isDownhill) return false; // 내리막이 끝나지 않은 경우
+		return true;
+	}
+	
+	static void init() throws IOException {
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		X = Integer.parseInt(st.nextToken());
+		count=0;
+		
+		// 행, 열을 각가 보기 위해 map 2개 사용
+		maps = new int[2][N][N];
+		for(int i=0;i<N;i++) {
+			st = new StringTokenizer(br.readLine());
+			for(int j=0;j<N;j++) {
+				int num = Integer.parseInt(st.nextToken());
+				maps[0][i][j] = num;
+				maps[1][j][i] = num;
+				
+			}
+		}
 	}
 
 }
+
