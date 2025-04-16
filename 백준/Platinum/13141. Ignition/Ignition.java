@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,6 +53,8 @@ public class Main {
 			edges.get(i).add(new ArrayList<>());
 		}
 		int num = 0;
+		// 노드의 왼족, 오른쪽에 연결된 경우를 나눠서 저장
+		// 같은 노드에서 출발해서 같은 노드에서 끝날 수 있음
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
 			int a = Integer.parseInt(st.nextToken());
@@ -68,7 +71,6 @@ public class Main {
 		// 모든 시작점에 대해 한 번씩 진행
 		double min = Double.MAX_VALUE;
 		for (int i = 1; i <= N; i++) {
-//			System.out.println("########## " + i);
 			double totalTime = 0;
 			boolean[] burned = new boolean[M]; // 각 간선이 추가되는 시간 저장
 			boolean[] isEnd = new boolean[M]; // 간선이 업데이트될 경우 끝났는지 관리
@@ -85,23 +87,28 @@ public class Main {
 			visited[i] = true;
 
 			int curTime = 0;
+			boolean finish = true;
 			while (!pq.isEmpty()) {
 				Edge e = pq.poll();
-//				System.out.println(e.num+" "+Arrays.toString(isEnd));
 				if (isEnd[e.num])
 					continue;
 				int a = e.a, b = e.b;
 				curTime = e.time;
 				isEnd[e.num] = true;
+				// 시간 업데이트. 아직 타고있는 간선을 종료 처리했으므로 Math.max로 계산
 				totalTime = Math.max(totalTime, curTime);
-
+				if(totalTime>min) {
+					finish = false; break;
+				}
+				
 				int next = -1;
 				if (visited[a])
 					next = b;
 				else
 					next = a;
-				if(visited[next]) continue;
+				if(visited[next]) continue; // 같은 지점에서 시작하고 끝나는 경우
 				visited[next] = true;
+				
 				for (int j = 0; j < 2; j++) {
 					for (Edge ne : edges.get(next).get(j)) {
 						if (!isEnd[ne.num]) {
@@ -119,10 +126,8 @@ public class Main {
 
 					}
 				}
-//				System.out.println(e.num + " " + next + " " + curTime);
 			}
-//			System.out.println(totalTime);
-			min = Math.min(min, totalTime);
+			if(finish )min = Math.min(min, totalTime);
 		}
 		System.out.println(String.format("%.1f", min));
 	}
